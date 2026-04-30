@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEY! Community Training Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1916; --ink-2: #4a4844; --ink-3: #8a8784;
+    --surface: #faf9f7; --surface-2: #f2f0ec; --surface-3: #e8e5de;
+    --accent: #2a5f3f; --accent-light: #e8f0eb;
+    --warm: #c4722a; --warm-light: #faf0e6;
+    --blue: #2a4a7f; --blue-light: #e8edf8;
+    --border: #e2dfd8; --radius: 12px; --radius-sm: 8px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); font-size: 16px; line-height: 1.6; }
+
+  header { border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; background: rgba(250,249,247,0.95); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-family: 'Instrument Serif', serif; font-size: 15px; font-style: italic; }
+  .logo-text { font-size: 14px; font-weight: 500; color: var(--ink); letter-spacing: -0.01em; }
+  .logo-sub { font-size: 11px; color: var(--ink-3); font-weight: 300; }
+  nav { display: flex; gap: 4px; }
+  .nav-btn { padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid transparent; background: transparent; color: var(--ink-2); transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+  .nav-btn:hover { background: var(--surface-2); }
+  .nav-btn.active { background: var(--ink); color: white; }
+
+  .hero { padding: 4rem 2rem 3rem; max-width: 780px; margin: 0 auto; text-align: center; }
+  .hero-eyebrow { display: inline-block; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); background: var(--accent-light); padding: 4px 12px; border-radius: 20px; margin-bottom: 1.25rem; }
+  .hero h1 { font-family: 'Instrument Serif', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 400; line-height: 1.15; color: var(--ink); margin-bottom: 1rem; letter-spacing: -0.02em; }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero p { font-size: 16px; color: var(--ink-2); max-width: 540px; margin: 0 auto 2rem; font-weight: 300; line-height: 1.7; }
+  .mode-toggle { display: inline-flex; background: var(--surface-2); border-radius: 30px; padding: 4px; gap: 2px; border: 1px solid var(--border); }
+  .mode-btn { padding: 8px 20px; border-radius: 24px; font-size: 13px; cursor: pointer; border: none; background: transparent; color: var(--ink-2); transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .mode-btn.active { background: white; color: var(--ink); font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+  .main { max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem; }
+  #view-filter { display: block; }
+  #view-guided { display: none; }
+
+  .filter-bar { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; }
+  .search-wrap { position: relative; margin-bottom: 1rem; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-3); font-size: 15px; }
+  input[type="search"] { width: 100%; padding: 10px 14px 10px 36px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--ink); background: var(--surface); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.15s; }
+  input[type="search"]:focus { border-color: var(--accent); }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 130px; }
+  .filter-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+  select { padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--ink); background: var(--surface); font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer; }
+  .reset-btn { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; color: var(--ink-3); background: transparent; font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap; align-self: flex-end; transition: all 0.15s; }
+  .reset-btn:hover { color: var(--ink); border-color: var(--ink-2); }
+  .results-count { font-size: 13px; color: var(--ink-3); margin-bottom: 1rem; display: block; }
+
+  .cards { display: flex; flex-direction: column; gap: 10px; }
+  .card { background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s; animation: fadeUp 0.2s ease both; }
+  .card:hover { border-color: #c8c4bc; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .card-top { padding: 1.1rem 1.25rem; cursor: pointer; display: flex; align-items: flex-start; gap: 1rem; }
+
+  .card-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); background: white; overflow: hidden; }
+  .card-icon img { width: 24px; height: 24px; object-fit: contain; display: block; }
+  .card-icon .fallback { font-size: 18px; line-height: 1; }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-name { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 2px; line-height: 1.3; }
+  .card-org { font-size: 12px; color: var(--ink-3); margin-bottom: 8px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .tag-green { background: var(--accent-light); color: var(--accent); }
+  .tag-warm { background: var(--warm-light); color: #7a4010; }
+  .tag-blue { background: var(--blue-light); color: var(--blue); }
+  .tag-gray { background: var(--surface-2); color: var(--ink-2); }
+  .tag-teal { background: #e6f4f1; color: #1a5c52; }
+  .card-chevron { color: var(--ink-3); font-size: 18px; transition: transform 0.2s; flex-shrink: 0; margin-top: 2px; }
+  .card.open .card-chevron { transform: rotate(180deg); }
+  .card-detail { display: none; padding: 0 1.25rem 1.25rem; border-top: 1px solid var(--surface-2); }
+  .card.open .card-detail { display: block; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding-top: 1rem; margin-bottom: 1rem; }
+  @media (max-width: 600px) { .detail-grid { grid-template-columns: 1fr; } }
+  .detail-item-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 3px; }
+  .detail-item-val { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  .detail-section { margin-bottom: 1rem; }
+  .detail-section-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 5px; }
+  .detail-section-body { font-size: 13px; color: var(--ink-2); line-height: 1.65; }
+  .research-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1rem; }
+  .article-count { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--blue); font-weight: 500; margin-bottom: 6px; }
+  .visit-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 500; padding: 6px 14px; border: 1px solid var(--accent); border-radius: 20px; transition: all 0.15s; }
+  .visit-link:hover { background: var(--accent); color: white; }
+  .no-results { text-align: center; padding: 3rem 2rem; color: var(--ink-3); font-size: 14px; }
+
+  .guided-wrap { max-width: 640px; margin: 0 auto; }
+  .progress-bar { height: 3px; background: var(--surface-3); border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+  .quiz-step { display: none; }
+  .quiz-step.active { display: block; }
+  .step-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin-bottom: 1rem; }
+  .step-num { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.5rem; }
+  .step-q { font-family: 'Instrument Serif', serif; font-size: 1.3rem; font-weight: 400; color: var(--ink); line-height: 1.3; margin-bottom: 1.25rem; }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 500px) { .options-grid { grid-template-columns: 1fr; } }
+  .option-btn { padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink-2); cursor: pointer; text-align: left; line-height: 1.4; transition: all 0.15s; }
+  .option-btn:hover, .option-btn.selected { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .option-btn.selected { font-weight: 500; }
+  .option-icon { font-size: 18px; margin-bottom: 4px; display: block; }
+  .option-label { font-weight: 500; display: block; margin-bottom: 2px; }
+  .option-sub { font-size: 11px; opacity: 0.75; }
+  .quiz-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; }
+  .back-btn { font-size: 13px; color: var(--ink-3); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 8px 0; }
+  .next-btn { padding: 10px 24px; background: var(--ink); color: white; border: none; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+  .next-btn:hover { background: var(--accent); }
+  .next-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  #guided-results { display: none; }
+  .results-header { background: var(--accent); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; color: white; }
+  .results-header h3 { font-family: 'Instrument Serif', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 4px; }
+  .results-header p { font-size: 13px; opacity: 0.8; font-weight: 300; }
+  .result-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 10px; }
+  .result-rank { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 4px; }
+  .result-name { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
+  .result-org { font-size: 12px; color: var(--ink-3); margin-bottom: 10px; }
+  .result-why { font-size: 13px; color: var(--ink-2); line-height: 1.6; padding: 10px 12px; background: var(--accent-light); border-radius: var(--radius-sm); margin-bottom: 10px; }
+  .result-why strong { color: var(--accent); }
+  .restart-btn { width: 100%; padding: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink-2); cursor: pointer; margin-top: 0.5rem; transition: all 0.15s; }
+  .restart-btn:hover { background: var(--surface-3); color: var(--ink); }
+
+  footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 12px; color: var(--ink-3); font-weight: 300; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">
+    <div class="logo-mark">H!</div>
+    <div>
+      <div class="logo-text">HEY! Community Training Hub</div>
+      <div class="logo-sub">Greater Cincinnati</div>
+    </div>
+  </a>
+  <nav>
+    <button class="nav-btn active" onclick="setView('filter',this)">Browse trainings</button>
+    <button class="nav-btn" onclick="setView('guided',this)">Get a recommendation</button>
+  </nav>
+</header>
+
+<div class="hero">
+  <span class="hero-eyebrow">For adults who work with youth</span>
+  <h1>Find the right training<br>for <em>your</em> community</h1>
+  <p>Browse 17 evidence-based and locally available trainings — or answer a few questions and get a personalized recommendation.</p>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="toggle-filter" onclick="setView('filter',null,this)">Browse &amp; filter</button>
+    <button class="mode-btn" id="toggle-guided" onclick="setView('guided',null,this)">Guide me</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="view-filter">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="search" id="search" placeholder="Search by name, topic, or keyword…" oninput="renderCards()" />
+      </div>
+      <div class="filter-row">
+        <div class="filter-group"><span class="filter-label">Evidence</span>
+          <select id="f-ev" onchange="renderCards()"><option value="">All</option><option value="evidence">Evidence-based</option><option value="local">Local / emerging</option></select></div>
+        <div class="filter-group"><span class="filter-label">Format</span>
+          <select id="f-fmt" onchange="renderCards()"><option value="">All formats</option><option value="in-person">In-person</option><option value="virtual">Virtual</option><option value="on-demand">On-demand</option></select></div>
+        <div class="filter-group"><span class="filter-label">Cost</span>
+          <select id="f-cost" onchange="renderCards()"><option value="">Any cost</option><option value="free">Free</option><option value="paid">Paid / varies</option></select></div>
+        <div class="filter-group"><span class="filter-label">Topic</span>
+          <select id="f-topic" onchange="renderCards()"><option value="">All topics</option><option value="mental health">Mental health</option><option value="trauma">Trauma-informed</option><option value="suicide">Suicide prevention</option><option value="lgbtq">LGBTQ+ inclusive</option><option value="parenting">Parenting / caregiving</option><option value="youth leadership">Youth leadership</option><option value="grief">Grief</option></select></div>
+        <div class="filter-group"><span class="filter-label">Duration</span>
+          <select id="f-dur" onchange="renderCards()"><option value="">Any length</option><option value="short">Under 4 hours</option><option value="half">Half day</option><option value="full">Full day+</option><option value="multi">Multi-day series</option></select></div>
+        <button class="reset-btn" onclick="resetFilters()">Reset</button>
+      </div>
+    </div>
+    <span class="results-count" id="results-count"></span>
+    <div class="cards" id="cards-list"></div>
+  </div>
+
+  <div id="view-guided">
+    <div class="guided-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="quiz-step active" id="step-1">
+        <div class="step-card">
+          <div class="step-num">Question 1 of 4</div>
+          <div class="step-q">Who are you primarily working with?</div>
+          <div class="options-grid">
+            <button class="option-btn" onclick="pick(1,'audience','children')"><span class="option-icon">🧒</span><span class="option-label">Young children</span><span class="option-sub">Ages 2–12</span></button>
+            <button class="option-btn" onclick="pick(1,'audience','teens')"><span class="option-icon">🧑</span><span class="option-label">Teens &amp; adolescents</span><span class="option-sub">Ages 13–18</span></button>
+            <button class="option-btn" onclick="pick(1,'audience','families')"><span class="option-icon">👨‍👩‍👧</span><span class="option-label">Families &amp; caregivers</span><span class="option-sub">Parents, guardians</span></button>
+            <button class="option-btn" onclick="pick(1,'audience','any')"><span class="option-icon">🌐</span><span class="option-label">All ages / general</span><span class="option-sub">Broad community work</span></button>
+          </div>
+        </div>
+        <div class="quiz-nav"><span></span><button class="next-btn" id="next-1" disabled onclick="nextStep(1)">Next →</button></div>
+      </div>
+      <div class="quiz-step" id="step-2">
+        <div class="step-card">
+          <div class="step-num">Question 2 of 4</div>
+          <div class="step-q">What's the main area you want to grow in?</div>
+          <div class="options-grid">
+            <button class="option-btn" onclick="pick(2,'focus','mental health')"><span class="option-icon">🧠</span><span class="option-label">Mental health awareness</span><span class="option-sub">Recognizing &amp; responding</span></button>
+            <button class="option-btn" onclick="pick(2,'focus','trauma')"><span class="option-icon">🌱</span><span class="option-label">Trauma-informed care</span><span class="option-sub">Understanding &amp; healing</span></button>
+            <button class="option-btn" onclick="pick(2,'focus','lgbtq')"><span class="option-icon">🏳️‍🌈</span><span class="option-label">LGBTQ+ inclusion</span><span class="option-sub">Safe, affirming spaces</span></button>
+            <button class="option-btn" onclick="pick(2,'focus','youth leadership')"><span class="option-icon">⭐</span><span class="option-label">Youth empowerment</span><span class="option-sub">Allyship &amp; leadership</span></button>
+            <button class="option-btn" onclick="pick(2,'focus','suicide')"><span class="option-icon">💬</span><span class="option-label">Crisis &amp; suicide prevention</span><span class="option-sub">Gatekeeper skills</span></button>
+            <button class="option-btn" onclick="pick(2,'focus','grief')"><span class="option-icon">🕊️</span><span class="option-label">Grief &amp; loss</span><span class="option-sub">Supporting through loss</span></button>
+          </div>
+        </div>
+        <div class="quiz-nav"><button class="back-btn" onclick="prevStep(2)">← Back</button><button class="next-btn" id="next-2" disabled onclick="nextStep(2)">Next →</button></div>
+      </div>
+      <div class="quiz-step" id="step-3">
+        <div class="step-card">
+          <div class="step-num">Question 3 of 4</div>
+          <div class="step-q">How much time can you commit?</div>
+          <div class="options-grid">
+            <button class="option-btn" onclick="pick(3,'time','short')"><span class="option-icon">⚡</span><span class="option-label">Quick training</span><span class="option-sub">Under 4 hours</span></button>
+            <button class="option-btn" onclick="pick(3,'time','half')"><span class="option-icon">🌤️</span><span class="option-label">Half day</span><span class="option-sub">4–8 hours</span></button>
+            <button class="option-btn" onclick="pick(3,'time','full')"><span class="option-icon">📅</span><span class="option-label">Full day</span><span class="option-sub">8+ hours</span></button>
+            <button class="option-btn" onclick="pick(3,'time','multi')"><span class="option-icon">🗓️</span><span class="option-label">Multi-session series</span><span class="option-sub">Ongoing commitment</span></button>
+          </div>
+        </div>
+        <div class="quiz-nav"><button class="back-btn" onclick="prevStep(3)">← Back</button><button class="next-btn" id="next-3" disabled onclick="nextStep(3)">Next →</button></div>
+      </div>
+      <div class="quiz-step" id="step-4">
+        <div class="step-card">
+          <div class="step-num">Question 4 of 4</div>
+          <div class="step-q">Any requirements around cost or format?</div>
+          <div class="options-grid">
+            <button class="option-btn" onclick="pick(4,'constraint','free')"><span class="option-icon">🆓</span><span class="option-label">Must be free</span><span class="option-sub">No budget available</span></button>
+            <button class="option-btn" onclick="pick(4,'constraint','virtual')"><span class="option-icon">💻</span><span class="option-label">Virtual preferred</span><span class="option-sub">Remote or on-demand</span></button>
+            <button class="option-btn" onclick="pick(4,'constraint','inperson')"><span class="option-icon">🤝</span><span class="option-label">In-person preferred</span><span class="option-sub">Face-to-face experience</span></button>
+            <button class="option-btn" onclick="pick(4,'constraint','any')"><span class="option-icon">✓</span><span class="option-label">No preference</span><span class="option-sub">Open to anything</span></button>
+          </div>
+        </div>
+        <div class="quiz-nav"><button class="back-btn" onclick="prevStep(4)">← Back</button><button class="next-btn" id="next-4" disabled onclick="showResults()">See my recommendations →</button></div>
+      </div>
+      <div id="guided-results"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Built for <a href="#">HEY! Cincinnati</a> — Hopeful Empowered Youth &nbsp;·&nbsp; Community &amp; Caregivers Working Group &nbsp;·&nbsp; Last updated March 2025
+</footer>
+
+<script>
+const T = [
+  {id:1,  name:"CARE (Child-Adult Relationship Enhancement)", org:"iCARE Collaborative",                  ev:"evidence", fmt:["in-person"],                   cost:"paid", dur:"short", topics:["parenting","trauma"],                    art:9,  icon:"🤝", fav:"https://www.icarecollaborative.org/favicon.ico",                          url:"https://www.icarecollaborative.org/our-evidence",                                        ov:"Evidence-based approach to enhance child-adult relationships and reduce mild to moderate behavior problems. Trauma-informed for caregivers and professionals.", det:"3–6 hours of in-person training",                                         res:"9 peer-reviewed studies. Significant improvements in parenting behaviors, fewer anxiety symptoms. Adapted for diverse populations including Black and Hispanic youth.", aud:"Caregivers, foster parents, professionals working with children", am:["children","families"]},
+  {id:2,  name:"CORE Teen",                                   org:"CEBC",                                 ev:"evidence", fmt:["in-person","on-demand"],         cost:"paid", dur:"multi", topics:["parenting","trauma"],                    art:2,  icon:"📚", fav:"https://www.cebc4cw.org/favicon.ico",                                        url:"https://www.cebc4cw.org/program/core-teen/",                                              ov:"Trauma-informed, culturally responsive training for resource parents of youth with behavioral challenges. Includes self-assessment, classroom, and right-time training.", det:"34 hours — in-person and on-demand modules",                              res:"2 peer-reviewed articles. Improvements in trauma-informed parenting, relationship development, and regulation. Especially effective for foster parents of Indigenous youth.", aud:"Resource/foster parents of teens", am:["teens","families"]},
+  {id:3,  name:"GLSEN Safe Spaces",                           org:"GLSEN",                                ev:"evidence", fmt:["virtual","on-demand"],           cost:"free", dur:"short", topics:["lgbtq","mental health"],                 art:6,  icon:"🏳️‍🌈", fav:"https://www.glsen.org/favicon.ico",                                    url:"https://www.glsen.org/resources/webinars-and-workshops",                                  ov:"Training to help educators and adults create safe, supportive, LGBTQ-inclusive environments for K-12 students.", det:"Free, on-demand webinars",                                                res:"6 peer-reviewed articles. School counselors more aware of biases post-training. Supportive adults are a protective factor for LGBTQ youth.", aud:"Educators, school counselors, youth-serving professionals", am:["teens","any"]},
+  {id:4,  name:"Mental Health First Aid",                     org:"Ohio MHFA",                            ev:"evidence", fmt:["in-person","virtual","blended"], cost:"paid", dur:"full",  topics:["mental health","suicide"],              art:5,  icon:"🩺", fav:"https://ohiomhfa.org/favicon.ico",                                            url:"https://ohiomhfa.org/",                                                                   ov:"Evidence-based early-intervention course teaching participants to identify, understand, and respond to signs of mental illness and substance use disorders.", det:"8.5 hrs in-person; 6.5 hrs blended; or 6.5 hrs virtual — cost varies",   res:"5 peer-reviewed articles. Improved recognition of mental illness, decreased stigma. Effects maintained at 6-month follow-up in 78–84% of participants.", aud:"Anyone — educators, workforce, community members", am:["any","teens","families"]},
+  {id:5,  name:"NAMI Basics",                                 org:"NAMI Ohio",                            ev:"evidence", fmt:["in-person","on-demand"],         cost:"free", dur:"multi", topics:["mental health","parenting"],             art:3,  icon:"💚", fav:"https://namiohio.org/favicon.ico",                                            url:"https://namiohio.org/support-and-education/mental-health-education/nami-basics/",         ov:"A 6-session education program for parents and caregivers of youth (ages 22 and younger) experiencing mental health symptoms. Covers navigating systems, crisis planning, and self-care.", det:"Free — on-demand virtual or in-person",                                    res:"3 peer-reviewed articles. Increased caregiver activation and help-seeking. Reduced child distress at 6-month follow-up.", aud:"Parents and family members of youth with mental health conditions", am:["families","teens"]},
+  {id:6,  name:"NAMI Family to Family",                       org:"NAMI",                                 ev:"evidence", fmt:["in-person"],                     cost:"free", dur:"multi", topics:["mental health","parenting"],             art:6,  icon:"👨‍👩‍👧", fav:"https://www.nami.org/favicon.ico",                                  url:"https://www.nami.org/Support-Education/Mental-Health-Education/NAMI-Family-to-Family/",   ov:"A free, 8-session program for family members and friends of people with mental health conditions. Taught by NAMI-trained family members with lived experience.", det:"Free, in-person group classes",                                          res:"6 peer-reviewed articles. Improved empowerment, coping, communication, and self-care. Greater depression reduction for caregivers of youth vs. adults.", aud:"Family, significant others, and friends of people with mental health conditions", am:["families","any"]},
+  {id:7,  name:"Ohio Adult Allies",                           org:"Ohio Center of Excellence",            ev:"evidence", fmt:["virtual"],                       cost:"free", dur:"multi", topics:["youth leadership","mental health"],      art:1,  icon:"⭐", fav:"https://preventioncoe.ohio.gov/favicon.ico",                                   url:"https://preventioncoe.ohio.gov/learn-and-grow/Project-ECHO/Ohio+Adult+Allies+Ready+to+Enhance", ov:"A Project ECHO series equipping adults who support youth community leaders. Five monthly sessions on communication, cultural competency, and youth mental well-being.", det:"Free — live virtual, 1st Tuesday 11am–12pm monthly",                       res:"1 peer-reviewed article. Adults better able to establish equitable group structure and support youth-led work.", aud:"Adult allies and facilitators of youth-led programs", am:["teens","any"]},
+  {id:8,  name:"PAX Tools",                                   org:"Envision Partnerships",                ev:"evidence", fmt:["in-person"],                     cost:"paid", dur:"full",  topics:["trauma","mental health"],               art:9,  icon:"🎯", fav:"https://envisionpartnerships.org/favicon.ico",                               url:"https://envisionpartnerships.org/what-we-do/prevention-trainings/pax-tools.html",         ov:"A collection of trauma-informed, evidence-based behavioral strategies for families and communities. Promotes self-regulation in children.", det:"Trainings scheduled periodically — check website",                         res:"9 peer-reviewed articles. Increased youth worker efficacy; youth less likely to be retraumatized. Effective across schools, after-school programs, and indigenous communities.", aud:"Educators, youth workers, families, community organizations", am:["children","teens","any"]},
+  {id:9,  name:"QPR (Question, Persuade, Refer)",              org:"QPR Institute",                        ev:"evidence", fmt:["in-person","virtual"],            cost:"free", dur:"short", topics:["suicide","mental health"],              art:6,  icon:"💬", fav:"https://qprinstitute.com/favicon.ico",                                        url:"https://qprinstitute.com/",                                                               ov:"Gatekeeper suicide prevention training — 60 minutes to learn how to recognize warning signs and connect someone to help. Like CPR for mental health crises.", det:"60-minute gatekeeper training — some orgs offer it free",                  res:"6 peer-reviewed articles. Improved self-efficacy and help-giving behaviors sustained at 2-year follow-up. Smaller training sizes produce stronger outcomes.", aud:"General public, educators, community members, professionals", am:["any","teens","families"]},
+  {id:10, name:"The Collaborative / Healing Youth Alliance",   org:"University of Maryland",               ev:"evidence", fmt:["in-person","virtual"],            cost:"paid", dur:"multi", topics:["trauma","mental health","youth leadership"],art:1,icon:"🌿", fav:"https://www.ssw.umaryland.edu/favicon.ico",                                url:"https://www.ssw.umaryland.edu/collaborative/",                                            ov:"Healing-Centered engagement through partnerships between grassroots orgs, non-profits, city agencies, and higher education. Focused on healing from trauma and violence.", det:"On-demand, in-person or virtual",                                          res:"1 peer-reviewed article. 92% of youth felt less stigma, 100% increased knowledge in healing and trauma, 75% increased knowledge in racial equity.", aud:"Youth-serving professionals, community organizations", am:["teens","any"]},
+  {id:11, name:"Youth Thrive",                                 org:"Center for the Study of Social Policy", ev:"evidence",fmt:["in-person"],                     cost:"paid", dur:"multi", topics:["youth leadership","mental health"],      art:4,  icon:"🌟", fav:"https://cssp.org/favicon.ico",                                                url:"https://cssp.org/our-work/project/youth-thrive/",                                         ov:"Changes policies and practices in youth-serving systems based on adolescent development research. Strengths-based, equity-focused, and values youth perspectives.", det:"2 days in-person (Aetna Better Health of KY offers locally)",             res:"4 peer-reviewed articles. Key themes: shared language, youth-centered focus, building a community of learners. Survey validated for ages 12–26 including LGBTQ+ youth.", aud:"Adults working in youth-serving organizations and systems", am:["teens","any"]},
+  {id:12, name:"1N5 Mental Health & Suicide Prevention",       org:"1N5 (Cincinnati)",                     ev:"local",    fmt:["in-person","virtual"],            cost:"free", dur:"short", topics:["mental health","suicide"],              art:0,  icon:"🔵", fav:"https://www.1n5.org/favicon.ico",                                              url:"https://www.1n5.org/",                                                                    ov:"Local trainings for schools, workplaces, and communities covering mental health 101, signs of suicide, and building resilience.", det:"Contact 1N5 for details — free",                                           res:"No peer-reviewed evidence published yet. Locally based in Greater Cincinnati.", aud:"Schools, workplaces, community members", am:["any","teens"]},
+  {id:13, name:"BOUNCE Trauma-Informed Trainings",             org:"BOUNCE Coalition",                     ev:"local",    fmt:["virtual","on-demand"],            cost:"free", dur:"short", topics:["trauma","mental health"],               art:0,  icon:"🟡", fav:"https://bouncecoalition.org/favicon.ico",                                     url:"https://bouncecoalition.org/trainings/",                                                  ov:"Trainings for youth-serving organizations, parents, and caregivers covering ACEs, trauma, strengths-based approaches, and the biology of stress.", det:"Free — virtual, on-demand",                                                res:"No peer-reviewed evidence published yet. Locally available and free.", aud:"Youth-serving organizations, parents and caregivers", am:["families","any"]},
+  {id:14, name:"Strong Grief Training",                        org:"Mayerson Center / Cincinnati Children's", ev:"local", fmt:["virtual","on-demand"],            cost:"free", dur:"half",  topics:["grief","trauma"],                       art:0,  icon:"🕊️", fav:"https://www.strongresilientyouth.org/favicon.ico",                         url:"https://www.strongresilientyouth.org/",                                                   ov:"A free, interactive 4-hour training for educators and supportive adults — trauma-informed skills to support grieving youth. Developed locally at Cincinnati Children's.", det:"Free — virtual, on-demand, 4 hours",                                       res:"No peer-reviewed evidence published yet. Locally developed and free.", aud:"Educators and supportive adults working with grieving youth", am:["children","teens","any"]},
+  {id:15, name:"The Well (My True SELF / True Body Project)",  org:"The Well",                             ev:"local",    fmt:["in-person"],                      cost:"paid", dur:"multi", topics:["mental health","trauma"],               art:0,  icon:"🧘", fav:"https://www.thewellcincy.org/favicon.ico",                                    url:"https://www.thewellcincy.org/trainings-workshops",                                        ov:"My True SELF supports social-emotional learning for students and adults. True Body Project addresses chronic stress and trauma through somatic and expressive arts practices.", det:"Contact The Well for details",                                             res:"No peer-reviewed evidence published yet. Cincinnati-based, relational and embodied approach.", aud:"Educators, community members, adults supporting youth", am:["any","teens"]},
+  {id:16, name:"Trauma Free World",                            org:"Trauma Free World",                    ev:"local",    fmt:["virtual","on-demand"],            cost:"free", dur:"short", topics:["trauma"],                               art:0,  icon:"🌍", fav:"https://www.traumafreeworld.org/favicon.ico",                                url:"https://www.traumafreeworld.org/",                                                        ov:"Trauma training for educators, non-profits, healthcare, businesses, and caregivers. Mission is to provide trauma training to everyone, everywhere.", det:"Free — virtual, on-demand",                                                res:"No peer-reviewed evidence published yet. Free, on-demand, and broadly accessible.", aud:"Educators, non-profits, healthcare, businesses, caregivers", am:["any"]},
+  {id:17, name:"Traumatic Grief Training",                     org:"KY Center for Grieving Children & Families", ev:"local", fmt:["in-person","virtual"],         cost:"free", dur:"short", topics:["grief","mental health"],                art:0,  icon:"💙", fav:"https://www.kentuckygriefcenter.org/favicon.ico",                            url:"https://www.kentuckygriefcenter.org/for-professionals",                                   ov:"Resources, training, and connection for professionals working with grieving children and adolescents. In-person and Zoom trainings on grief and bereavement topics.", det:"Free/low cost — Zoom or in-person",                                        res:"No peer-reviewed evidence published yet. Regionally accessible and low/no cost.", aud:"Professionals working with grieving children and adolescents", am:["children","teens","any"]}
+];
+
+const qa = {};
+
+function fav(t) {
+  const id = 'fv'+t.id;
+  const esc = t.icon.replace(/'/g,"\\'");
+  return `<img id="${id}" src="${t.fav}" width="24" height="24" style="display:block;object-fit:contain"
+    onerror="var s=document.createElement('span');s.className='fallback';s.textContent='${esc}';document.getElementById('${id}').replaceWith(s)">`;
+}
+
+function setView(v, nb, tb) {
+  document.getElementById('view-filter').style.display = v==='filter'?'block':'none';
+  document.getElementById('view-guided').style.display = v==='guided'?'block':'none';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  if(nb) nb.classList.add('active');
+  if(tb) tb.classList.add('active');
+  document.getElementById(v==='filter'?'toggle-filter':'toggle-guided').classList.add('active');
+  document.querySelectorAll('.nav-btn')[v==='filter'?0:1].classList.add('active');
+}
+
+function pick(step, key, val) {
+  qa[key] = val;
+  event.currentTarget.closest('.options-grid').querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.getElementById('next-'+step).disabled = false;
+  document.getElementById('progress-fill').style.width = Math.round(step/4*100)+'%';
+}
+
+function nextStep(n) { document.getElementById('step-'+n).classList.remove('active'); document.getElementById('step-'+(n+1)).classList.add('active'); document.getElementById('progress-fill').style.width=Math.round((n+1)/4*100)+'%'; }
+function prevStep(n) { document.getElementById('step-'+n).classList.remove('active'); document.getElementById('step-'+(n-1)).classList.add('active'); }
+
+function score(t) {
+  let s=0;
+  if(t.am.includes(qa.audience)) s+=3;
+  if(t.topics.includes(qa.focus)) s+=4;
+  if(t.dur===qa.time) s+=2; else if(qa.time==='any') s+=1;
+  if(qa.constraint==='free'){ s += t.cost==='free'?3:-2; }
+  if(qa.constraint==='virtual' && t.fmt.some(f=>f==='virtual'||f==='on-demand')) s+=2;
+  if(qa.constraint==='inperson' && t.fmt.includes('in-person')) s+=2;
+  if(qa.constraint==='any') s+=1;
+  if(t.ev==='evidence') s+=1;
+  return s;
+}
+
+function why(t) {
+  const p=[];
+  if(t.topics.includes(qa.focus)) p.push(`directly addresses <strong>${qa.focus}</strong>`);
+  if(t.dur===qa.time) p.push('fits your time commitment');
+  if(qa.constraint==='free'&&t.cost==='free') p.push('completely free');
+  if(qa.constraint==='virtual'&&t.fmt.some(f=>f==='virtual'||f==='on-demand')) p.push('available online');
+  if(qa.constraint==='inperson'&&t.fmt.includes('in-person')) p.push('offered in-person');
+  if(t.ev==='evidence') p.push('backed by peer-reviewed research');
+  return p.length?'This training '+p.join(', ')+'.':t.ov.split('.')[0]+'.';
+}
+
+function showResults() {
+  document.getElementById('step-4').classList.remove('active');
+  document.getElementById('progress-fill').style.width='100%';
+  const top = [...T].map(t=>({...t,sc:score(t)})).sort((a,b)=>b.sc-a.sc).slice(0,4);
+  const labels=['Best match','Strong match','Also consider','Also consider'];
+  const el=document.getElementById('guided-results');
+  el.style.display='block';
+  el.innerHTML=`
+    <div class="results-header"><h3>Your recommendations</h3><p>Based on your interest in ${qa.focus||'your focus area'} — here are the best fits.</p></div>
+    ${top.map((t,i)=>`
+      <div class="result-card">
+        <div class="result-rank">${labels[i]}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:3px">
+          <div class="card-icon" style="width:32px;height:32px;border-radius:8px;flex-shrink:0">${fav(t)}</div>
+          <div class="result-name">${t.name}</div>
+        </div>
+        <div class="result-org">${t.org} · ${t.det}</div>
+        <div class="result-why">${why(t)}</div>
+        <div class="tags" style="margin-bottom:10px">
+          <span class="tag ${t.ev==='evidence'?'tag-green':'tag-warm'}">${t.ev==='evidence'?'Evidence-based':'Local'}</span>
+          <span class="tag ${t.cost==='free'?'tag-teal':'tag-gray'}">${t.cost==='free'?'Free':'Paid'}</span>
+          ${t.art>0?`<span class="tag tag-blue">${t.art} peer-reviewed articles</span>`:''}
+        </div>
+        ${t.url?`<a class="visit-link" href="${t.url}" target="_blank">Visit program →</a>`:''}
+      </div>`).join('')}
+    <button class="restart-btn" onclick="restart()">↺ Start over</button>`;
+}
+
+function restart() {
+  Object.keys(qa).forEach(k=>delete qa[k]);
+  document.getElementById('guided-results').style.display='none';
+  document.querySelectorAll('.quiz-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-1').classList.add('active');
+  document.getElementById('progress-fill').style.width='0%';
+  [1,2,3,4].forEach(i=>{const b=document.getElementById('next-'+i);if(b)b.disabled=true;});
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+}
+
+const DL={short:'Under 4 hrs',half:'Half day',full:'Full day+',multi:'Multi-day series'};
+const FL={'in-person':'In-person','virtual':'Virtual','on-demand':'On-demand','blended':'Blended'};
+const FC={'in-person':'tag-blue','virtual':'tag-green','on-demand':'tag-teal','blended':'tag-warm'};
+
+function renderCards() {
+  const q=document.getElementById('search').value.toLowerCase();
+  const fEv=document.getElementById('f-ev').value;
+  const fFmt=document.getElementById('f-fmt').value;
+  const fCost=document.getElementById('f-cost').value;
+  const fTopic=document.getElementById('f-topic').value;
+  const fDur=document.getElementById('f-dur').value;
+  const filtered=T.filter(t=>{
+    const s=(t.name+t.org+t.ov+t.topics.join(' ')+t.aud).toLowerCase();
+    if(q&&!s.includes(q)) return false;
+    if(fEv&&t.ev!==fEv) return false;
+    if(fFmt&&!t.fmt.includes(fFmt)) return false;
+    if(fCost&&t.cost!==fCost) return false;
+    if(fTopic&&!t.topics.includes(fTopic)) return false;
+    if(fDur&&t.dur!==fDur) return false;
+    return true;
+  });
+  document.getElementById('results-count').textContent=filtered.length+' training'+(filtered.length!==1?'s':'')+' found';
+  const list=document.getElementById('cards-list');
+  if(!filtered.length){list.innerHTML='<div class="no-results">No trainings match your filters.<br>Try broadening your search.</div>';return;}
+  list.innerHTML=filtered.map((t,i)=>`
+    <div class="card" id="card-${t.id}" style="animation-delay:${i*.04}s">
+      <div class="card-top" onclick="toggle(${t.id})">
+        <div class="card-icon">${fav(t)}</div>
+        <div class="card-body">
+          <div class="card-name">${t.name}</div>
+          <div class="card-org">${t.org}</div>
+          <div class="tags">
+            <span class="tag ${t.ev==='evidence'?'tag-green':'tag-warm'}">${t.ev==='evidence'?'Evidence-based':'Local / emerging'}</span>
+            <span class="tag ${t.cost==='free'?'tag-teal':'tag-gray'}">${t.cost==='free'?'Free':'Paid / varies'}</span>
+            ${t.fmt.map(f=>`<span class="tag ${FC[f]}">${FL[f]}</span>`).join('')}
+            <span class="tag tag-gray">${DL[t.dur]}</span>
+            ${t.art>0?`<span class="tag tag-blue">${t.art} studies</span>`:''}
+          </div>
+        </div>
+        <div class="card-chevron">⌄</div>
+      </div>
+      <div class="card-detail">
+        <div class="detail-grid">
+          <div><div class="detail-item-label">Who it's for</div><div class="detail-item-val">${t.aud}</div></div>
+          <div><div class="detail-item-label">Format &amp; time</div><div class="detail-item-val">${t.det}</div></div>
+        </div>
+        <div class="detail-section"><div class="detail-section-title">Overview</div><div class="detail-section-body">${t.ov}</div></div>
+        <div class="research-box">
+          ${t.art>0?`<div class="article-count">📄 ${t.art} peer-reviewed article${t.art>1?'s':''}</div>`:''}
+          <div class="detail-section-title" style="margin-bottom:4px">What the research shows</div>
+          <div class="detail-section-body">${t.res}</div>
+        </div>
+        ${t.url?`<a class="visit-link" href="${t.url}" target="_blank">Visit program website →</a>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function toggle(id) { document.getElementById('card-'+id).classList.toggle('open'); }
+function resetFilters() { document.getElementById('search').value=''; ['f-ev','f-fmt','f-cost','f-topic','f-dur'].forEach(id=>document.getElementById(id).value=''); renderCards(); }
+
+renderCards();
+</script>
+</body>
+</html>
